@@ -5,31 +5,34 @@
 using namespace std;
 
 int n, m;
-vector<int> arr;
+vector<char> input;
 bool visited[20];
 
-void dfs(int idx, int length) {
+void dfs(int index, int length) {
 	if (length == n) {
-		string get_result = "";
-		int mo = 0;
+
 		int ja = 0;
+		int mo = 0;
 
 		for (int i = 0; i < m; i++) {
 			if (visited[i] == true) {
-				if (arr[i] == 'a' || arr[i] == 'e' || arr[i] == 'o' || arr[i] == 'i' || arr[i] == 'u')
+				if (input[i] == 'a' || input[i] == 'e' || input[i] == 'i' || input[i] == 'o' || input[i] == 'u')
 					mo++;
 				else
 					ja++;
-				get_result += arr[i];
 			}
 		}
-
+		
 		if (mo >= 1 && ja >= 2) {
-			cout << get_result << "\n";
+			for (int i = 0; i < m; i++)
+				if (visited[i] == true)
+					cout << input[i];
+			cout << "\n";
 		}
 		return;
 	}
-	for (int i = idx; i < m; i++) {
+
+	for (int i = index; i < m; i++) {
 		if (visited[i] == true)
 			continue;
 		visited[i] = true;
@@ -43,14 +46,16 @@ int main() {
 	ios::sync_with_stdio(false);
 
 	cin >> n >> m;
+	
 	for (int i = 0; i < m; i++) {
-		char input;
-		cin >> input;
-		arr.push_back(input);
+		char temp;
+		cin >> temp;
+		input.push_back(temp);
 	}
 
-	sort(arr.begin(), arr.end());
+	sort(input.begin(), input.end());
 
 	dfs(0, 0);
+	
 	return 0;
 }
