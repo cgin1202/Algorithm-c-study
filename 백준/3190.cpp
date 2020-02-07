@@ -15,7 +15,7 @@ vector<pair<int, string>> info;
 int dx[] = { 0,0,1,-1 };
 int dy[] = { 1,-1, 0, 0 };
 
-// 0 ì•„ëž˜  1 ìœ„ 2 ì˜¤ë¥¸ìª½ 3 ì™¼ìª½
+// 0 ¾Æ·¡  1 À§ 2 ¿À¸¥ÂÊ 3 ¿ÞÂÊ
 int clock = 0;
 
 int changeDir(int op, string dir) {
