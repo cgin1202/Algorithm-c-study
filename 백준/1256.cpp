@@ -1,73 +1,88 @@
 #include <iostream>
-#include <algorithm>
-#include <memory.h>
+#include <vector>
+#include <string>
 
 using namespace std;
 
-int dp[101][101];
-string word;
-bool noWord=false;
-int n, m, k;
+vector<vector<int>> dp;
 
-void getWord(int a, int z, int skip) {
-	if (a == 0) {
-		for (int i = 0; i < z; i++)
-			word += "z";
-		return;
-	}
+void init(int n, int m) {
 
-	if (z==0) {
-		for (int i = 0; i < a; i++)
-			word += "a";
-		return;
-	}
-
-	int skipNum = dp[a - 1][z];
-
-	if (skip < skipNum) {
-		word += "a";
-		getWord(a - 1, z, skip);
-	}
-	else if (skip <= 1000000000) {
-		word += "z";
-		getWord(a, z-1, skip-skipNum);
-	}
-	else {
-		noWord = true;
-	}
-}
-
-void init() {
-
-	cin >> n >> m >> k;
-	memset(dp, -1, sizeof(dp));
-
-	for (int i = 1; i <= n; i++)
+	for (int i = 1; i <= n + m; i++) {
+		dp[i][1] = i;
+		dp[i][i] = 1;
 		dp[i][0] = 1;
+	}
 
-	for (int j = 1; j <= m; j++)
-		dp[0][j] = 1;
-
-	for (int i = 1; i <= n; i++)
-		for (int j = 1; j <= m; j++)
-			dp[i][j] = min(dp[i - 1][j] + dp[i][j - 1], 1000000009);
+	for (int i = 2; i <= n + m; i++) {
+		for (int j = 1; j <= i; j++) {
+			dp[i][j] = dp[i - 1][j] + dp[i - 1][j - 1];
+			if (dp[i][j] > 1e9)
+				dp[i][j] = (1e9)+1;
+		}
+	}
 }
 
+bool error = false;
+
+void getResult(int n, int m, int k, int length, int maxLength, string output) {
+
+	if (length == maxLength) {
+		for (int i = 0; i < length; i++)
+			cout << output << "\n";
+		return;
+	}
+
+	if (n == 0) {
+		for (int i = 0; i < m; i++)
+			output += "z";
+		cout << output << "\n";
+		return;
+	}
+
+	if (m == 0) {
+		for (int i = 0; i < n; i++)
+			output += "a";
+		cout << output << "\n";
+		return;
+	}
+
+	int pointNum = dp[n + m-1][n-1];
+
+	if (k <= pointNum)
+		getResult(n-1, m, k, length + 1, maxLength, output + "a");
+	else if (k <= 1e9)
+		getResult(n, m - 1, k - pointNum, length + 1, maxLength, output + "z");
+	else {
+		error = true;
+		return;
+	}
+}
 int main() {
 
 	cin.tie(0);
 	ios::sync_with_stdio(false);
 
-	init();
-	if (k > dp[n][m])
-		noWord = true;
-	else
-		getWord(n, m, k - 1);
+	int n, m, k;
+	cin >> n >> m >> k;
 
-	if (noWord)
+
+	dp.resize(n + m + 1, vector<int>(n + m + 1, 0));
+	init(n, m);
+
+	bool visited = false;
+
+	if (dp[n + m][n] < k || dp[n + m][m] < k)
+		error = true;
+
+	if (error == true) {
 		cout << "-1\n";
+		visited = true;
+	}
 	else
-		cout << word << "\n";
+		getResult(n, m, k, 0, n+m, "");
 
+	if (visited==false && error == true)
+		cout << "-1\n";
 	return 0;
 }
