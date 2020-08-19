@@ -5,70 +5,77 @@
 using namespace std;
 
 struct node {
-	int left;
-	int right;
+	int leftNode;
+	int rightNode; 
 	int value;
 };
-
-int parent[10001];
-vector<node> v;
 
 bool compare(node x, node y) {
 	if (x.value < y.value)
 		return true;
+	else if (x.value == y.value)
+		return x.leftNode < y.leftNode;
 	else
 		return false;
 }
 
-int getParent(int x) {
-	if (parent[x] == x)
-		return x;
-	return parent[x] = getParent(parent[x]);
-}
-
-void unionParent(int x, int y) {
-	int a = getParent(x);
-	int b = getParent(y);
-	if (a < b)
-		parent[b] = a;
+int getParent(int index, vector<int> &parent) {
+	if (parent[index] == index)
+		return parent[index];
 	else
-		parent[a] = b;
+		return parent[index] = getParent(parent[index], parent);
 }
 
-int findParent(int x, int y) {
-	int a = getParent(x);
-	int b = getParent(y);
-	if (a == b)
-		return 1;
+void unionParent(int leftNode, int rightNode, vector<int> &parent) {
+	int leftParent = getParent(leftNode, parent);
+	int rightParent = getParent(rightNode, parent);
+
+	if (leftParent <= rightParent)
+		parent[rightParent] = leftParent;
 	else
-		return 0;
+		parent[leftParent] = rightParent;
 }
 
+bool isUnionParent(int leftNode, int rightNode, vector<int>& parent) {
+	int leftParent = getParent(leftNode, parent);
+	int rightParent = getParent(rightNode, parent);
+	if (leftParent == rightParent)
+		return false;
+	else
+		return true;
+}
 int main() {
+
 	cin.tie(0);
 	ios::sync_with_stdio(false);
 
-	int n, m;
-	cin >> n >> m;
+	int v, e;
+	cin >> v >> e;
 
-	for (int i = 0; i < m; i++) {
-		int left, right, value;
-		cin >> left >> right >> value;
-		v.push_back({ left, right, value });
-	}
-
-	sort(v.begin(), v.end(), compare);
-
-	for (int i = 1; i <= n; i++)
+	vector<int> parent(v + 1);
+	for (int i = 1; i <= v; i++)
 		parent[i] = i;
-
-	int sum = 0;
-	for (int i = 0; i < v.size(); i++) {
-		if (findParent(v[i].left, v[i].right) == 1)
-			continue;
-		sum += v[i].value;
-		unionParent(v[i].left, v[i].right);
+	vector<node> graph;
+	for (int i = 1; i <= e; i++) {
+		int leftNode, rightNode, value;
+		cin >> leftNode >> rightNode >> value;
+		graph.push_back({ leftNode, rightNode, value });
 	}
-	cout << sum << "\n";
+
+	sort(graph.begin(), graph.end(), compare);
+
+	int output = 0;
+
+	for (int i = 0; i < graph.size(); i++) {
+		int leftNode = graph[i].leftNode;
+		int rightNode = graph[i].rightNode;
+		int value = graph[i].value;
+
+		if (isUnionParent(leftNode, rightNode, parent) == true) {
+			output += value;
+			unionParent(leftNode, rightNode, parent);
+		}
+	}
+	cout << output << "\n";
 	return 0;
 }
