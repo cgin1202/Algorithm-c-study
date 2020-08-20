@@ -1,53 +1,53 @@
 #include <iostream>
-#include <cstring>
+#include <vector>
 
 using namespace std;
 
-int n;
-int student[100001];
-int visted[100001];
-bool done[100001];
 int cnt = 0;
 
-void dfs(int index) {
-	if (done[index] == true || visted[index]==-1)
-		return;
-
-	if (visted[index] == 0)
-		visted[index] = 1;
-	else if (visted[index] == 1) {
-		done[index] = true;
-		cnt++;
+void searchGroup(int index, vector<int>& node, vector<bool>& isVisited, vector<bool>& isDone) {
+	int nextNum = node[index];
+	isVisited[index] = true;
+	if (isVisited[nextNum] == false)
+		searchGroup(nextNum, node, isVisited, isDone);
+	else {
+		if (isDone[nextNum] == false) {
+			for (int i = nextNum; i != index; i = node[i])
+				cnt++;
+			cnt++;
+		}
 	}
-	dfs(student[index]);
-	visted[index] = -1;
+	isDone[index] = true;
 }
 int main() {
 
 	cin.tie(0);
 	ios::sync_with_stdio(false);
 
-	int t;
-	cin >> t;
+	int tk;
+	cin >> tk;
 
-	while (t > 0) {
-		cin >> n;
-		for (int i = 1; i <= n; i++) {
-			cin >> student[i];
-		}
-		for (int i = 1; i <= n; i++) {
-			if (visted[i] == 0)
-				dfs(i);
-		}
+	while (tk > 0) {
 		
-		cout << n - cnt << "\n";
-		for (int i = 1; i <= n; i++) {
-			student[i] = 0;
-			visted[i] = 0;
-			done[i] = false;
-		}
+		int n;
+		cin >> n;
+
+		vector<int> node;
+		node.resize(n + 1);
+		for (int i = 1; i <= n; i++)
+			cin >> node[i];
+
+		vector<bool> isVisited(n+1, false);
+		vector<bool> isDone(n+1, false);
+
 		cnt = 0;
-		t--;
+		for (int i = 1; i <= n; i++)
+			if (isVisited[i] == false)
+				searchGroup(i, node, isVisited, isDone);
+
+		cout << n - cnt << "\n";
+		tk--;
 	}
+
 	return 0;
 }
