@@ -1,54 +1,32 @@
 #include <iostream>
-#include <map>
 #include <string>
-#include <vector>
-#include <algorithm>
+#include <map>
 
 using namespace std;
 
-int n, m;
-map<string, int> mm;
-
-void getResult() {
-	map<string, int>::iterator it;
-	vector<string> result;
-	for(it=mm.begin(); it!=mm.end(); it++)
-		if (it->second == 2)
-			result.push_back(it->first);
-
-	cout << result.size() << "\n";
-	sort(result.begin(), result.end());
-	for (int i = 0; i < result.size(); i++)
-		cout << result[i] << "\n";
-}
-void duplicate(string input) {
-	if (mm.find(input) == mm.end())
-		mm[input] = 1;
-	else
-		mm[input]++;
-}
-
-void init() {
-	cin >> n >> m;
-	for (int i = 0; i < n; i++) {
-		string input;
-		cin >> input;
-		duplicate(input);
-	}
-
-	for (int i = 0; i < m; i++) {
-		string input;
-		cin >> input;
-		duplicate(input);
-	}
-
-}
-int main() {
-
+int main(){
+	
 	cin.tie(0);
 	ios::sync_with_stdio(false);
-	init();
-	getResult();
 	
+	int n, m;
+	cin >> n >> m;
+	
+	map<string, int> nameCnt;
+	int cnt=0;
+	
+	for(int i=0; i<n+m; i++){
+		string input;
+		cin >> input;
+		nameCnt[input]++;
+		if(nameCnt[input]==2)
+			cnt++;
+	}
+	
+	map<string, int>::iterator it;
+	cout << cnt <<"\n";
+	for(it=nameCnt.begin(); it!=nameCnt.end(); it++)
+		if(it->second==2)
+			cout << it->first <<"\n";
 	return 0;
 }
