@@ -67,11 +67,8 @@ int main(int argc, char** argv){
     dijkstr(1, graph, dist);
 
 
-    long long maxValue=-1;
-
-    for(int i=1; i<=n; i++)
-        maxValue = max(maxValue, dist[i]);
-
+    long long maxValue=dist[n];
+    maxValue++;
     while(1){
         if(isPrime(maxValue)==true)
             break;
